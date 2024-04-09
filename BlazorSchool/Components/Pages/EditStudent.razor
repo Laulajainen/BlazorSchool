@@ -1,0 +1,65 @@
+﻿@page "/editstudent"
+@page "/editstudent/{id:int}"
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject IStudentService StudentService
+<h1>Welcome to the Student Edit Page</h1>
+<p>Please edit the student's information below and click 'Save' when you're done.</p>
+
+
+    <h4>Edit @student.FirstName @student.LastName</h4>
+
+<EditForm Model="student" OnValidSubmit="UpdateStudent">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="firstName">First Name:</label>
+        <InputText id="firstName" @bind-Value="student.FirstName" placeholder="Enter your first name" />
+    </div>
+
+    <div>
+        <label for="lastName">Last Name:</label>
+        <InputText id="lastName" @bind-Value="student.LastName" placeholder="Enter your last name" />
+    </div>
+
+    <div>
+        <label for="birthDate">Birth Date:</label>
+        <InputDate id="birthDate" @bind-Value="student.BirthDate" />
+    </div>
+
+    <div>
+        <label for="email">Email:</label>
+        <InputText id="email" @bind-Value="student.Email" placeholder="Enter your email" />
+    </div>
+
+    <button type="submit">Save</button>
+
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    Student student = new Student();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != 0)
+        {
+            student = await StudentService.GetStudentById(Id);
+        }
+        else
+        {
+            student = new Student();
+        }
+    }
+    async Task UpdateStudent()
+    {
+        await StudentService.UpdateStudent(student);
+        NavigationManager.NavigateTo("/admin");
+
+        // Show a confirmation prompt
+        await JSRuntime.InvokeVoidAsync("alert", "Student information updated successfully!");
+    }
+}

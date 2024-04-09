@@ -1,0 +1,121 @@
+﻿@page "/admin"
+@using BlazorSchool.Components.Shared
+@inject NavigationManager NavigationManager
+@inject IStudentService studentService
+@inject IJSRuntime JSRuntime
+@attribute [StreamRendering(true)]
+
+<h1>Welcome to the Admin Page</h1>
+<p>Here you can view all students, filter them by age, and edit or delete their information.</p>
+
+<p>
+    Filter by age:
+    <input type="number" @bind="FilterAge" />
+</p>
+
+@if (filteredStudents == null)
+{
+    <span>Loading...</span>
+}
+else if (filteredStudents.Count == 0)
+{
+    <span>No students found</span>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Age</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in filteredStudents)  // Change this line
+            {
+                <tr>
+                    <td>@student.Id</td>
+                    <td>@student.FirstName</td>
+                    <td>@student.LastName</td>
+                    <td>@CalculateAge(student.BirthDate)</td>
+                    <td>@student.Email</td>
+                    <td>
+                        <EditStudentButton Id="@student.Id" />
+                        <button class="btn btn-danger" @onclick="() => DeleteStudent(student.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Student>? students = null;
+    private List<Student>? filteredStudents = null;
+    private int _filterAge;
+
+    public int FilterAge
+    {
+        get => _filterAge;
+        set
+        {
+            _filterAge = value;
+            FilterByAge();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        students = await studentService.GetAllStudents();
+        filteredStudents = new List<Student>(students);
+        StateHasChanged();
+    }
+
+    private void FilterByAge()
+    {
+        if (students != null)
+        {
+            if (_filterAge > 0)
+            {
+                filteredStudents = students.Where(s => CalculateAge(s.BirthDate) == _filterAge).ToList();
+            }
+            else
+            {
+                filteredStudents = new List<Student>(students);
+            }
+        }
+    }
+
+    private async Task DeleteStudent(int id)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete student with ID {id}?");
+        if (confirmed)
+        {
+            await studentService.DeleteStudent(id);
+            students = await studentService.GetAllStudents(); // Refresh the list of students
+            FilterByAge(); // Refresh the filtered list of students
+            StateHasChanged();
+        }
+    }
+
+    public static int CalculateAge(DateTime birthDate)
+    {
+        var today = DateTime.Today;
+        var age = today.Year - birthDate.Year;
+        if (birthDate.Date > today.AddYears(-age)) age--;
+        return age;
+    }
+    void CreateStudent()
+    {
+        NavigationManager.NavigateTo("editstudent");
+    }
+void NavToEditStudent(int id)
+{
+    NavigationManager.NavigateTo($"/editstudent/{id}");
+}
+
+}

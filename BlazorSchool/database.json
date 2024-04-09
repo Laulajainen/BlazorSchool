@@ -1,0 +1,37 @@
+[
+  {
+    "Id": 1,
+    "FirstName": "John",
+    "LastName": "Doe",
+    "BirthDate": "1990-01-01T00:00:00",
+    "Email": "john@edu.tucsweden.se"
+  },
+  {
+    "Id": 2,
+    "FirstName": "Jane",
+    "LastName": "Doe",
+    "BirthDate": "1992-02-02T00:00:00",
+    "Email": "jane@edu.tucsweden.se"
+  },
+  {
+    "Id": 3,
+    "FirstName": "Bob",
+    "LastName": "Smith",
+    "BirthDate": "1994-03-03T00:00:00",
+    "Email": "bob@edu.tucsweden.se"
+  },
+  {
+    "Id": 4,
+    "FirstName": "Alice",
+    "LastName": "Johnson",
+    "BirthDate": "1996-04-04T00:00:00",
+    "Email": "alice@edu.tucsweden.se"
+  },
+  {
+    "Id": 5,
+    "FirstName": "oskar",
+    "LastName": "laulajainen",
+    "BirthDate": "1994-09-12T00:00:00",
+    "Email": "oskar@edu.tucsweden.se"
+  }
+]

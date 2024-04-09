@@ -1,0 +1,49 @@
+﻿@page "/apply"
+@inject IJSRuntime JSRuntime
+@inject IStudentService studentService
+
+<h1>Welcome to the Application Page</h1>
+<p>Please fill out the form below to apply as a student.</p>
+
+<EditForm  method="post" Model="newStudent" OnValidSubmit="SubmitApplication" FormName="applyForm" Enhance>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="firstName">First Name:</label>
+        <InputText id="firstName" @bind-Value="newStudent.FirstName" placeholder="Enter your first name" />
+    </div>
+
+    <div>
+        <label for="lastName">Last Name:</label>
+        <InputText id="lastName" @bind-Value="newStudent.LastName" placeholder="Enter your last name" />
+    </div>
+
+    <div>
+        <label for="birthDate">Birth Date:</label>
+        <InputDate id="birthDate" @bind-Value="newStudent.BirthDate" />
+    </div>
+
+    <div>
+        <label for="email">Email:</label>
+        <InputText id="email" @bind-Value="newStudent.Email" placeholder="Enter your email" />
+    </div>
+
+    <button type="submit">Apply</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    private Student newStudent { get; set; } = new Student();
+
+    private async Task SubmitApplication()
+    {
+        await studentService.AddStudent(newStudent);
+
+        // Reset the form by creating a new instance of Student
+        newStudent = new Student();
+
+        // Show a confirmation prompt
+        await JSRuntime.InvokeVoidAsync("alert", "Application submitted successfully!");
+    }
+}

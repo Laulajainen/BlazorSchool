@@ -1,0 +1,12 @@
+﻿@inject NavigationManager NavigationManager
+
+<button @onclick="() => EditStudent(Id)" class="btn btn-primary">Edit</button>
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    void EditStudent(int id)
+    {
+        NavigationManager.NavigateTo($"/editstudent/{id}");
+    }
+}
